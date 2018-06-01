@@ -1,0 +1,35 @@
+{
+	"RenderingMode":"Cutout",  
+	"MainMapsColor":"FF7036FF",
+	"AlphaCutoff":"1",        
+	"Smoothness":"1",          
+	"Metallic":"0",            
+	"Emission":"true",            
+	"EmissionColor":"000000",       
+	"GlobalIllumination":"RealtimeEmissive",  
+	"MainMapsTilingX":"100",     
+	"MainMapsTilingY":"100",     
+	"MainMapsOffsetX":"100",     
+	"MainMapsOffsetY":"100",     
+	"SpecularHighlights":"true",  
+	"Reflections":"false",         
+	"RenderQueue":"3000",         
+	"EnableInstancing":"true"     
+}
+
+RenderingMode;       //枚举 			Opaque|Cutout|Fade|Transparent
+MainMapsColor;       //16进制颜色 	例如:FF7036FF
+AlphaCutoff;         //float:		[0,1]
+Smoothness;          //float:		[0,1]
+Metallic;            //float:		[0,1]
+Emission;            //bool:		true|false
+EmissionColor;       //float:		[0,1]
+GlobalIllumination;  //枚举 			None|RealtimeEmissive|BakedEmissive|AnyEmissive|EmissiveIsBlack
+MainMapsTilingX;     //float
+MainMapsTilingY;     //float
+MainMapsOffsetX;     //float
+MainMapsOffsetY;     //float
+SpecularHighlights;  //bool			true|false
+Reflections;         //bool			true|false
+RenderQueue;         //int
+EnableInstancing;    //bool			true|false

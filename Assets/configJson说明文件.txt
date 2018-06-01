@@ -1,0 +1,69 @@
+{
+    "ModelConfig":{
+        "ModelAnimationType":"",
+        "MaterialTypes":[
+            {
+                "MaterialName":"",
+                "TemplateName":""
+            }
+        ],
+        "GenericToLegacy":true,
+        "PlayAutomatically":false,
+        "PerspectiveMode":{
+            "CalculateType":"FullScreen",
+            "CalculateChildPath":"",
+            "CameraX":0,
+            "CameraY":0,
+            "CameraZ":-10
+        }
+    },
+    "TextureConfig":{
+        "TextureType":"",
+        "MaxTextureSize":-1,
+        "WrapMode":"",
+        "FilterMode":""
+    }
+}
+
+
+
+属性说明:(所有属性全部为可选)
+
+//动画的类型
+ModelAnimationType:		None, Legacy, Generic, Human
+
+//如果有动画则是否自动从新动画转为老动画,默认为true,如果设置了ModelAnimationType则该项将无效
+GenericToLegacy:		true,false
+
+//可以为指定的材质设定一种模板效果
+MaterialTypes:
+	//材质名
+	MaterialName
+	//模板名
+	TemplateName
+
+//如果模型包含动画,则是否开启自动播放,默认为false不自动播放
+PlayAutomatically:		true,false
+
+//视角模式
+PerspectiveMode:
+	//三种模式:全屏,真实,聚焦节点,默认为FullScreen
+	CalculateType:		FullScreen,Real,Node
+	//如果CalculateType为Node,则通过该值指定子节点的路径,路径中不包含根节点
+	CalculateChildPath:
+	//摄像机的默认position,这个值必须和marsdt中的摄像机一致,目前该值默认值为(0,0,-10)
+	CameraX
+	CameraY
+	CameraZ
+
+
+
+
+//如果打包的是一张图片,则可以设置贴图的类型
+TextureType:			Default, Image, NormalMap, Bump, GUI, Cubemap, Reflection, Cookie, Advanced, Lightmap, Cursor, Sprite, HDRI, SingleChannel
+//贴图的大小
+MaxTextureSize:			32 64 128 256 512 1024 2048 4096 8192 (整数,2的幂)
+//模式
+WrapMode:				Repeat, Clamp
+//FilterMode
+FilterMode:				Point, Bilinear, Trilinear

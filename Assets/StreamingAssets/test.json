@@ -1,0 +1,18 @@
+{
+	"RenderingMode":"Cutout",  
+	"MainMapsColor":"FF7036FF",
+	"AlphaCutoff":"1",        
+	"Smoothness":"1",          
+	"Metallic":"0",            
+	"Emission":"false",            
+	"EmissionColor":"00BCE5",       
+	"GlobalIllumination":"RealtimeEmissive",  
+	"MainMapsTilingX":"100",     
+	"MainMapsTilingY":"100",     
+	"MainMapsOffsetX":"100",     
+	"MainMapsOffsetY":"100",     
+	"SpecularHighlights":"true",  
+	"Reflections":"true",         
+	"RenderQueue":"3000",         
+	"EnableInstancing":"true"     
+}
