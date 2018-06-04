@@ -83,7 +83,7 @@ public class AssetsSetting {
         {
             case CalculateModelNativePos.CalculateType.FullScreen:
             case CalculateModelNativePos.CalculateType.Real:
-                pos = CalculateModelNativePos.Caululate(go.transform, perspectiveMode.m_CalculateCamera, perspectiveMode.m_CaululateType);
+                pos = CalculateModelNativePos.Calculate(go.transform, perspectiveMode.m_CalculateCamera, go.transform.position, perspectiveMode.m_CaululateType);
                 break;
             case CalculateModelNativePos.CalculateType.Node:
                 Transform node = go.transform.Find(perspectiveMode.m_CalculateChildPath);
@@ -91,7 +91,7 @@ public class AssetsSetting {
                 {
                     node = go.transform;
                 }
-                pos = CalculateModelNativePos.Caululate(node, perspectiveMode.m_CalculateCamera, perspectiveMode.m_CaululateType);
+                pos = CalculateModelNativePos.Calculate(node, perspectiveMode.m_CalculateCamera, go.transform.position, perspectiveMode.m_CaululateType);
                 break;
             default:
                 break;

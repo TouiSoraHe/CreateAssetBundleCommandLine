@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class CalculateModelNativePos {
+public class CalculateModelNativePos
+{
 
     private static Camera _camera;
 
@@ -27,13 +28,16 @@ public class CalculateModelNativePos {
     /// <param name="camera">参与计算的相机对象</param>
     /// <param name="caululateType">FullScreen：全屏模式、Real：真实尺寸、Node：定点模式</param>
     /// <returns></returns>
-    public static Vector3 Caululate(Transform target,Camera camera, CalculateType caululateType)
+    public static Vector3 Calculate(Transform target, Camera camera, Vector3 rootPosition, CalculateType caululateType)
     {
         if (target == null || camera == null)
         {
             Debug.LogError("函数参数target、camera不能为null");
             return Vector3.zero;
         }
+
+        Vector3 RootPosition = rootPosition;
+
         _camera = camera;
         Vector3 center = Vector3.zero;
         Renderer[] renders = target.GetComponentsInChildren<Renderer>();
@@ -58,9 +62,34 @@ public class CalculateModelNativePos {
             boundsZ.Add(child.bounds.max.z);
         }
 
-        //如果target不是父节点，则此处将boxColliderCenter设置到Target的中心点位置
-        Vector3 boxCollideCenter = bounds.center - target.position;
+        //-测试代码------------------------------------------------------
+        //List<Vector3> matrix = new List<Vector3>();
+        //matrix.Add(new Vector3(boundsX.Min(), boundsY.Min(), boundsZ.Min()));
+        //matrix.Add(new Vector3(boundsX.Max(), boundsY.Min(), boundsZ.Min()));
+        //matrix.Add(new Vector3(boundsX.Max(), boundsY.Max(), boundsZ.Min()));
+        //matrix.Add(new Vector3(boundsX.Min(), boundsY.Max(), boundsZ.Min()));
+        //matrix.Add(new Vector3(boundsX.Min(), boundsY.Min(), boundsZ.Max()));
+        //matrix.Add(new Vector3(boundsX.Max(), boundsY.Min(), boundsZ.Max()));
+        //matrix.Add(new Vector3(boundsX.Max(), boundsY.Max(), boundsZ.Max()));
+        //matrix.Add(new Vector3(boundsX.Min(), boundsY.Max(), boundsZ.Max()));
+        //foreach (Vector3 item in matrix)
+        //{
+        //    bounds.Encapsulate(item);
+        //}
+        //GameObject gameObj = new GameObject();
+        //BoxCollider boxCollider = gameObj.AddComponent<BoxCollider>();
+        //boxCollider.center = bounds.center;// - target.position;
+        //boxCollider.size = bounds.size;
+        ////gameObj.transform.position = target.position;
 
+        //Vector3 boxCollideCenter = bounds.center;// - target.position;
+        //Vector3 boxCollideCenter = bounds.center;
+
+        //GameObject centerObj = new GameObject();
+        //centerObj.transform.position = boxCollideCenter;
+        //----------------------------------------------------------------
+
+        Vector3 boxCollideCenter = bounds.center;
         //模型近平面 的 左下角及右上角的点
         Vector3 leftDown = new Vector3(boundsX.Min(), boundsY.Min(), boundsZ.Min());
         Vector3 rightUp = new Vector3(boundsX.Max(), boundsY.Max(), boundsZ.Min());
@@ -80,7 +109,10 @@ public class CalculateModelNativePos {
                 finalPosition = caululatePosition;
                 break;
         }
-        return finalPosition;
+        //gameObj.transform.position = finalPosition;
+
+        //由于提取中心点boxColliderCenter时 相当于是默认将模型放置到0，0，0点来进行计算，所以最后计算结果加回这个初始坐标
+        return finalPosition + RootPosition;
     }
 
     /// <summary>
@@ -97,12 +129,12 @@ public class CalculateModelNativePos {
         Vector2 leftPoint = _camera.WorldToScreenPoint(new Vector3(leftDown.x, 0, boxCenter.z));
         Vector2 rightPoint = _camera.WorldToScreenPoint(new Vector3(rightUp.x, 0, boxCenter.z));
         Vector3 finalPosHorizontal = Vector3.zero;
-        finalPosHorizontal = CaululateFinalPos(leftPoint, rightPoint, center, boxCenter,ScreenHV.Horizontal);
+        finalPosHorizontal = CalculateFinalPos(leftPoint, rightPoint, center, boxCenter, ScreenHV.Horizontal);
 
         Vector2 upPoint = _camera.WorldToScreenPoint(new Vector3(0, rightUp.y, boxCenter.z));
         Vector2 downPoint = _camera.WorldToScreenPoint(new Vector3(0, leftDown.y, boxCenter.z));
         Vector3 finalPosVertical = Vector3.zero;
-        finalPosVertical = CaululateFinalPos(downPoint, upPoint, center, boxCenter, ScreenHV.Vertical);
+        finalPosVertical = CalculateFinalPos(downPoint, upPoint, center, boxCenter, ScreenHV.Vertical);
         if (finalPosHorizontal.z >= finalPosVertical.z)
             return finalPosHorizontal;
         else
@@ -119,12 +151,13 @@ public class CalculateModelNativePos {
     /// <param name="boxCenter">boxCollider中心点</param>
     /// <param name="screenHV">屏幕横纵屏枚举</param>
     /// <returns></returns>
-    static Vector3 CaululateFinalPos(Vector2 minPos,Vector2 maxPos, Vector3 forwardPlaneCenter,Vector3 boxCenter, ScreenHV screenHV)
+    static Vector3 CalculateFinalPos(Vector2 minPos, Vector2 maxPos, Vector3 forwardPlaneCenter, Vector3 boxCenter, ScreenHV screenHV)
     {
         Vector3 finalPos = Vector3.zero;
         // finalZ/y = a/b;  模型中心距离相机的最终距离/模型中心平面与相机的当前距离 = 模型中心点平面宽或高/屏幕的宽或高
         float a = Vector2.Distance(maxPos, minPos);
         Plane plane = new Plane(-_camera.transform.forward, boxCenter);
+        //模型中心平面到相机的距离 无论正负在屏幕的投影都是相同的，目的是模型显示在相机前面，所以距离直接取绝对值
         float y = Mathf.Abs(plane.GetDistanceToPoint(_camera.transform.position));
         float b = Screen.width;
         switch (screenHV)
@@ -139,14 +172,17 @@ public class CalculateModelNativePos {
 
         //finalDis*6/5 相当于模型占屏幕比例 5/6
         float finalDis = a * y / b * 6 / 5;
+
         if (finalDis < _camera.nearClipPlane)
             finalDis = _camera.nearClipPlane;
+
         //计算模型gameObject的最终worldPos
         finalPos = _camera.transform.position + _camera.transform.forward * (finalDis);
         finalPos -= boxCenter;
         Vector3 fix = (boxCenter - forwardPlaneCenter).normalized;
         //由于模型到相机的距离是基于中心点计算，但最终效果是使模型的最近平面显示效果正确，所以将模型在中心点到最近面中心点的方向上移动 两个中心点距离单位的长度
         finalPos += Vector3.Distance(forwardPlaneCenter, boxCenter) * fix;
+
         return finalPos;
     }
 
