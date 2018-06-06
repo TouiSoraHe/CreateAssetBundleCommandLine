@@ -86,6 +86,7 @@ public class CreateSDF
         ExportSDFJsonDataWithRootPath(GlobalConstants.TempPath, FileTools.GetFileName(srcPath).ToLower());
         string sdfPath = GlobalConstants.TempPath + "/" + FileTools.GetFileName(srcPath).ToLower() + ".sdf";
         AssetsSetting.MoveOutAsset(sdfPath, outPath);                       //将打包好的文件移动到输出目录
+        AssetsSetting.ClearResourcesDir();                                  //清空Resources目录
     }
 
     public static void ExportSDFJsonDataWithRootPath(string path, string sceneName)
