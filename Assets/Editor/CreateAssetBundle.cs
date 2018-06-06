@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 
 public class CreateAssetBundle : Editor {
@@ -97,13 +98,20 @@ public class CreateAssetBundle : Editor {
     public static void StartBuildBundle()
     {
         AssetsSetting.ClearResourcesDir();                                  //清空Resources目录
+        LogTools.Warning("清空Resources目录结束");
         srcPath = AssetsSetting.ImportAsset(srcPath);                       //将srcPath上的文件复制到Resources目录下,并且导入资源
+        LogTools.Warning("导入资源结束");
         AssetsSetting.ImporterSet(configJson, srcPath);           //对资源进行各种参数修改和设置再次导入
+        LogTools.Warning("资源设置结束");
         ClearAssetBundlesName();                                            //清空AssetBundlesName
+        LogTools.Warning("清空AssetBundleName结束");
         PerpareToBuild(srcPath);                                            //设置打包资源的assetBundleName
+        LogTools.Warning("设置AssetBundleName结束");
         StartToBuild();                                                     //开始打包
+        LogTools.Warning("打包结束");
         string assetBundlePath = GlobalConstants.TempPath + "/" + FileTools.GetFileName(srcPath).ToLower() + ".ab";
         AssetsSetting.MoveOutAsset(assetBundlePath,outPath);                //将打包好的文件移动到输出目录
+        LogTools.Warning("移动资源结束");
     }
 
 
