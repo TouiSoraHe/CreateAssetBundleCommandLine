@@ -78,6 +78,7 @@ public class AssetsSetting {
     {
         Vector3 pos = go.transform.position;
         go.transform.position = Vector3.zero;
+        go.transform.rotation = Quaternion.identity;
         PerspectiveMode perspectiveMode = configJson.m_ModelConfig.m_PerspectiveMode;
         switch (perspectiveMode.m_CaululateType)
         {
