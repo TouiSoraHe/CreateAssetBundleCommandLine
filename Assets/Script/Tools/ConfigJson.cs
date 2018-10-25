@@ -134,8 +134,8 @@ public class ModelConfig
 [Serializable]
 public class PerspectiveMode
 {
-    [SerializeField] private string CalculateType = "FullScreen";
-    [SerializeField] private string CalculateChildPath;
+    [SerializeField] private string CalculateType = "Node";
+    [SerializeField] private string CalculateChildPath = "";//默认聚焦到根节点
     [SerializeField] private float CameraX = 0f;
     [SerializeField] private float CameraY = 0f;
     [SerializeField] private float CameraZ = -10f;

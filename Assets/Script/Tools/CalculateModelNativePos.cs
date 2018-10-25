@@ -171,7 +171,7 @@ public class CalculateModelNativePos
         }
 
         //finalDis*6/5 相当于模型占屏幕比例 5/6
-        float finalDis = a * y / b * 6 / 5;
+        float finalDis = a * y / b * 6 / 3.5f;
 
         if (finalDis < _camera.nearClipPlane)
             finalDis = _camera.nearClipPlane;
