@@ -9,4 +9,5 @@ public class GlobalConstants {
     public static readonly string TempPath = AbsoluteResourcesPath + "/Temp";
     public static readonly string ProjectConfigFilePath = FileTools.GetDirectoryName(FileTools.GetDirectoryName(Application.dataPath)) + "/project.config";//项目同级目录
     public static readonly string LogFilePath = FileTools.GetDirectoryName(Application.dataPath) + "/log.txt";
+    public static readonly string ExceptionFBXFolder = FileTools.GetDirectoryName(Application.dataPath) + "/ExceptionFBXFolder";
 }

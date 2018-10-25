@@ -39,6 +39,19 @@ public class CreateSDF
         }
         catch (System.Exception e)
         {
+            if (FileTools.FileExists(srcPath))
+            {
+                LogTools.Info("发生异常的文件存在,文件路径为:" + srcPath);
+                if (!FileTools.DirectoryExists(GlobalConstants.ExceptionFBXFolder))
+                {
+                    FileTools.CreateDirectory(GlobalConstants.ExceptionFBXFolder);
+                }
+                FileTools.CopyFile(srcPath, GlobalConstants.ExceptionFBXFolder + "/" + FileTools.GetFileName(srcPath) + "(" + DateTime.Now.ToString() + ")");
+            }
+            else
+            {
+                LogTools.Info("发生异常的文件存在,文件路径为:" + srcPath);
+            }
             PrintError(e.Message);
             LogTools.Error(e.Message + "\n" + GetDetailsInfo(), e);
         }
