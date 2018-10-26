@@ -39,21 +39,7 @@ public class CreateSDF
         }
         catch (System.Exception e)
         {
-            if (FileTools.FileExists(srcPath))
-            {
-                LogTools.Info("发生异常的文件存在,文件路径为:" + srcPath);
-                if (!FileTools.DirectoryExists(GlobalConstants.ExceptionFBXFolder))
-                {
-                    FileTools.CreateDirectory(GlobalConstants.ExceptionFBXFolder);
-                }
-                FileTools.CopyFile(srcPath, GlobalConstants.ExceptionFBXFolder + "/" + FileTools.GetFileName(srcPath) + "(" + DateTime.Now.ToString() + ")");
-            }
-            else
-            {
-                LogTools.Info("发生异常的文件存在,文件路径为:" + srcPath);
-            }
-            PrintError(e.Message);
-            LogTools.Error(e.Message + "\n" + GetDetailsInfo(), e);
+            PrintExcepitonLog(e);
         }
     }
 
@@ -89,6 +75,44 @@ public class CreateSDF
         }
         return ret;
 
+    }
+
+    private static void PrintExcepitonLog(Exception e)
+    {
+        if (e.GetType() == typeof(InvalidOperationException))
+        {
+            LogTools.PrintError("打包失败,文件已损坏");
+
+        }
+        else
+        {
+            LogTools.PrintError(e.GetType().Name + e.Message);
+        }
+        LogTools.Error(e.Message + "\n" + GetDetailsInfo(), e);
+        try
+        {
+            String exceptionFilePath = GlobalConstants.AbsoluteResourcesPath + "/" + FileTools.GetFileName(srcPath);
+            if (FileTools.FileExists(exceptionFilePath))
+            {
+                LogTools.Info("发生异常的文件存在,文件路径为:" + exceptionFilePath);
+                if (!FileTools.DirectoryExists(GlobalConstants.ExceptionFBXFolder))
+                {
+                    FileTools.CreateDirectory(GlobalConstants.ExceptionFBXFolder);
+                }
+                String destFilePath = GlobalConstants.ExceptionFBXFolder + "/" + FileTools.GetFileName(exceptionFilePath) + "(" + DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss") + ")";
+                FileTools.CopyFile(exceptionFilePath, destFilePath);
+            }
+            else
+            {
+                LogTools.Info("发生异常的文件不存在,文件路径为");
+            }
+        }
+        catch (Exception ee)
+        {
+            Debug.Log(ee);
+            LogTools.PrintError(ee.GetType().Name + ee.Message);
+            LogTools.Error(ee.Message + "\n" + GetDetailsInfo(), ee);
+        }
     }
 
     public static void StartBuildSDF()

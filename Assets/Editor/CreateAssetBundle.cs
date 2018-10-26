@@ -27,7 +27,7 @@ public class CreateAssetBundle : Editor {
             outPath = commandLineArgs[11];
             //获取扩展设置
             string configInfoJson = "";
-            if (commandLineArgs.Length>12)
+            if (commandLineArgs.Length > 12)
             {
                 configInfoJson = commandLineArgs[12];
             }
@@ -38,25 +38,11 @@ public class CreateAssetBundle : Editor {
                 buildTarget = ProjectConfig.Instance.m_AssetBundleBuildTarget;
             }
             StartBuildBundle();
-            LogTools.Info("打包结束,未发现异常.srcPath:" + commandLineArgs[10] + " outPath:" + commandLineArgs[11] + " configInfoJson:" + (commandLineArgs.Length > 12? commandLineArgs[12]:""));
+            LogTools.Info("打包结束,未发现异常.srcPath:" + commandLineArgs[10] + " outPath:" + commandLineArgs[11] + " configInfoJson:" + (commandLineArgs.Length > 12 ? commandLineArgs[12] : ""));
         }
         catch (System.Exception e)
         {
-            if (FileTools.FileExists(srcPath))
-            {
-                LogTools.Info("发生异常的文件存在,文件路径为:" + srcPath);
-                if (!FileTools.DirectoryExists(GlobalConstants.ExceptionFBXFolder))
-                {
-                    FileTools.CreateDirectory(GlobalConstants.ExceptionFBXFolder);
-                }
-                FileTools.CopyFile(srcPath, GlobalConstants.ExceptionFBXFolder + "/" + FileTools.GetFileName(srcPath) + "(" + DateTime.Now.ToString() + ")");
-            }
-            else
-            {
-                LogTools.Info("发生异常的文件存在,文件路径为:" + srcPath);
-            }
-            LogTools.PrintError(e.Message);
-            LogTools.Error(e.Message+"\n"+ GetDetailsInfo(), e);
+            PrintExcepitonLog(e);
         }
     }
 
@@ -94,18 +80,63 @@ public class CreateAssetBundle : Editor {
 
     }
 
+    private static void PrintExcepitonLog(Exception e)
+    {
+        if (e.GetType() == typeof(InvalidOperationException))
+        {
+            LogTools.PrintError("打包失败,文件已损坏");
+
+        }
+        else
+        {
+            LogTools.PrintError(e.GetType().Name + e.Message);
+        }
+        LogTools.Error(e.Message + "\n" + GetDetailsInfo(), e);
+        try
+        {
+            String exceptionFilePath = GlobalConstants.AbsoluteResourcesPath + "/" + FileTools.GetFileName(srcPath);
+            if (FileTools.FileExists(exceptionFilePath))
+            {
+                LogTools.Info("发生异常的文件存在,文件路径为:" + exceptionFilePath);
+                if (!FileTools.DirectoryExists(GlobalConstants.ExceptionFBXFolder))
+                {
+                    FileTools.CreateDirectory(GlobalConstants.ExceptionFBXFolder);
+                }
+                String destFilePath = GlobalConstants.ExceptionFBXFolder + "/" + FileTools.GetFileName(exceptionFilePath)+"("+ DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss") + ")";
+                FileTools.CopyFile(exceptionFilePath, destFilePath);
+            }
+            else
+            {
+                LogTools.Info("发生异常的文件不存在,文件路径为");
+            }
+        }
+        catch (Exception ee)
+        {
+            Debug.Log(ee);
+            LogTools.PrintError(ee.GetType().Name + ee.Message);
+            LogTools.Error(ee.Message + "\n" + GetDetailsInfo(), ee);
+        }
+    }
+
     /// <summary>
     /// 该方法用于测试使用
     /// </summary>
     [MenuItem("Test/Test")]
     public static void Test()
     {
-        srcPath = "D:/fbx/ceshimoxing.FBX";
-        outPath = "C:/Users/Star/Downloads/test";
+        srcPath = "D:/fbx/test.FBX";
+        outPath = "D:/fbx/test.ab";
         //获取扩展设置
         string configInfoJson = "";
         configJson = JsonTools.ResolutionJsonFromString<ConfigJson>(configInfoJson);
-        StartBuildBundle();
+        try
+        {
+            StartBuildBundle();
+        }
+        catch (System.Exception e)
+        {
+            PrintExcepitonLog(e);
+        }
     }
 
     public static void StartBuildBundle()
