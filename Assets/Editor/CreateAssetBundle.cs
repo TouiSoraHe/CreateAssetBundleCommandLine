@@ -32,11 +32,6 @@ public class CreateAssetBundle : Editor {
                 configInfoJson = commandLineArgs[12];
             }
             configJson = JsonTools.ResolutionJsonFromString<ConfigJson>(configInfoJson);
-            //设置打包平台
-            if (ProjectConfig.Instance.m_AssetBundleBuildTarget != EnumTools.GetException<BuildTarget>())
-            {
-                buildTarget = ProjectConfig.Instance.m_AssetBundleBuildTarget;
-            }
             StartBuildBundle();
             LogTools.Info("打包结束,未发现异常.srcPath:" + commandLineArgs[10] + " outPath:" + commandLineArgs[11] + " configInfoJson:" + (commandLineArgs.Length > 12 ? commandLineArgs[12] : ""));
         }
@@ -48,7 +43,7 @@ public class CreateAssetBundle : Editor {
 
     private static string GetDetailsInfo()
     {
-        string ret = "当前详细状态:\n";
+        string ret = "\n当前详细状态:\n";
         string temp = "";
         if (commandLineArgs != null)
         {
@@ -91,7 +86,8 @@ public class CreateAssetBundle : Editor {
         {
             LogTools.PrintError(e.GetType().Name + e.Message);
         }
-        LogTools.Error(e.Message + "\n" + GetDetailsInfo(), e);
+        LogTools.Error(GetDetailsInfo(), e);
+        //将失败的文件拷贝至指定目录
         try
         {
             String exceptionFilePath = GlobalConstants.AbsoluteResourcesPath + "/" + FileTools.GetFileName(srcPath);
@@ -112,9 +108,7 @@ public class CreateAssetBundle : Editor {
         }
         catch (Exception ee)
         {
-            Debug.Log(ee);
-            LogTools.PrintError(ee.GetType().Name + ee.Message);
-            LogTools.Error(ee.Message + "\n" + GetDetailsInfo(), ee);
+            LogTools.Error(GetDetailsInfo(), ee);
         }
     }
 
@@ -141,15 +135,32 @@ public class CreateAssetBundle : Editor {
 
     public static void StartBuildBundle()
     {
+        LogTools.Info("---------------------------------start-------------------------------------");
+        LogTools.Info("设置打包平台");
+        //设置打包平台
+        if (ProjectConfig.Instance.m_AssetBundleBuildTarget != EnumTools.GetException<BuildTarget>())
+        {
+            buildTarget = ProjectConfig.Instance.m_AssetBundleBuildTarget;
+        }
+        LogTools.Info("清理资源:");
         AssetsSetting.ClearResourcesDir();                                  //清空Resources目录
+        LogTools.Info("拷贝并导入资源");
         srcPath = AssetsSetting.ImportAsset(srcPath);                       //将srcPath上的文件复制到Resources目录下,并且导入资源
+        LogTools.Info("设置资源");
         AssetsSetting.ImporterSet(configJson, srcPath);           //对资源进行各种参数修改和设置再次导入
+        LogTools.Info("清空AssetBundlesName");
         ClearAssetBundlesName();                                            //清空AssetBundlesName
+        LogTools.Info("设置AssetBundlesName");
         PerpareToBuild(srcPath);                                            //设置打包资源的assetBundleName
+        LogTools.Info("开始打包");
         StartToBuild();                                                     //开始打包
+        LogTools.Info("导出资源");
         string assetBundlePath = GlobalConstants.TempPath + "/" + FileTools.GetFileName(srcPath).ToLower() + ".ab";
         AssetsSetting.MoveOutAsset(assetBundlePath,outPath);                //将打包好的文件移动到输出目录
+        LogTools.Info("清空资源文件");
         AssetsSetting.ClearResourcesDir();                                  //清空Resources目录
+        LogTools.Info("结束");
+        LogTools.Info("---------------------------------end-------------------------------------");
     }
 
 

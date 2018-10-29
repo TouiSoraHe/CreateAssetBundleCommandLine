@@ -50,6 +50,7 @@ public class LogTools {
         if (e !=null)
         {
             finallyContent += "\n\n";
+            finallyContent += e.GetType().Name + ":" + e.Message+"\n";
             finallyContent += e.StackTrace;
         }
         finallyContent += "\n\n\n";

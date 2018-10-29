@@ -88,7 +88,8 @@ public class CreateSDF
         {
             LogTools.PrintError(e.GetType().Name + e.Message);
         }
-        LogTools.Error(e.Message + "\n" + GetDetailsInfo(), e);
+        LogTools.Error(GetDetailsInfo(), e);
+        //将失败的文件拷贝至指定目录
         try
         {
             String exceptionFilePath = GlobalConstants.AbsoluteResourcesPath + "/" + FileTools.GetFileName(srcPath);
@@ -109,9 +110,7 @@ public class CreateSDF
         }
         catch (Exception ee)
         {
-            Debug.Log(ee);
-            LogTools.PrintError(ee.GetType().Name + ee.Message);
-            LogTools.Error(ee.Message + "\n" + GetDetailsInfo(), ee);
+            LogTools.Error(GetDetailsInfo(), ee);
         }
     }
 
